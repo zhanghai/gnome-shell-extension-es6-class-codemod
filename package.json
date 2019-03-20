@@ -1,0 +1,22 @@
+{
+  "name": "gnome-shell-es6-class-codemod",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "npx jscodeshift -d -p --run-in-band test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DreaminginCodeZH/gnome-shell-es6-class-codemod.git"
+  },
+  "author": "Hai Zhang",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DreaminginCodeZH/gnome-shell-es6-class-codemod/issues"
+  },
+  "homepage": "https://github.com/DreaminginCodeZH/gnome-shell-es6-class-codemod#readme",
+  "dependencies": {
+    "jscodeshift": "^0.6.3",
+    "prompt-sync": "^4.1.6"
+  }
+}
