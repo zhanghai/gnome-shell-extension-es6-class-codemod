@@ -1,6 +1,6 @@
 # gnome-shell-es6-class-codemod
 
-A [jscodeshift](https://github.com/facebook/jscodeshift/) transform that helps migrating GNOME Shell extensions to 3.32.
+A [jscodeshift](https://github.com/facebook/jscodeshift/) transform that helps [migrating GNOME Shell extensions to 3.32](https://gitlab.gnome.org/GNOME/gnome-shell/merge_requests/361).
 
 It basically tries to replace usage of `Lang.Class()` and `GObject.Class()` to the ES6 `class` syntax, and optionally wrapped by `GObject.registerClass()`.
 
