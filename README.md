@@ -1,4 +1,4 @@
-# gnome-shell-es6-class-codemod
+# gnome-shell-extension-es6-class-codemod
 
 A [jscodeshift](https://github.com/facebook/jscodeshift/) transform that helps [migrating GNOME Shell extensions to 3.32](https://gitlab.gnome.org/GNOME/gnome-shell/merge_requests/361).
 
