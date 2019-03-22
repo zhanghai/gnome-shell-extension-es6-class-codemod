@@ -58,6 +58,7 @@ export default function transformer(file, api) {
 
                 let id = null;
                 let superClass = null;
+                const fieldProperties = [];
                 for (const property of objectExpression.properties) {
                     if (property.key.type !== 'Identifier') {
                         throw new Error(`property.key.type: ${property.key.type}`);
@@ -76,6 +77,15 @@ export default function transformer(file, api) {
                             break;
                         case 'Extends':
                             superClass = property.value;
+                            break;
+                        default:
+                            if (property.value.type === 'FunctionExpression') {
+                                break;
+                            }
+                            if (property.kind !== 'init') {
+                                throw new Error(`property.kind: ${property.kind}`);
+                            }
+                            fieldProperties.push(property);
                             break;
                     }
                 }
@@ -120,6 +130,7 @@ export default function transformer(file, api) {
                     hasGObjectClass = true;
                 }
 
+                let constructorOrInitMethodDefinition = null;
                 const body = [];
                 for (const property of objectExpression.properties) {
                     switch (property.key.name) {
@@ -129,7 +140,7 @@ export default function transformer(file, api) {
                             break;
                         default: {
                             if (property.value.type !== 'FunctionExpression') {
-                                throw new Error(`property.value.type: ${property.value.type}`);
+                                break;
                             }
                             const kind = property.kind !== 'init' ? property.kind : 'method';
                             let key;
@@ -165,12 +176,57 @@ export default function transformer(file, api) {
                                     });
                             const methodDefinition = jscs.methodDefinition(kind, key, property.value);
                             methodDefinition.comments = property.comments;
+                            if (property.key.name === '_init') {
+                                constructorOrInitMethodDefinition = methodDefinition;
+                            }
                             body.push(methodDefinition);
                         }
                     }
                 }
-                const classBody = jscs.classBody(body);
 
+                if (fieldProperties.length) {
+                    if (!constructorOrInitMethodDefinition) {
+                        constructorOrInitMethodDefinition = jscs.methodDefinition('method',
+                                jscs.identifier(isGObjectClass ? '_init' : 'constructor'),
+                                jscs.functionExpression(null, [], jscs.blockStatement(superClass ? [
+                                    jscs.expressionStatement(jscs.callExpression(isGObjectClass ?
+                                            jscs.memberExpression(jscs.super(), jscs.identifier('_init'))
+                                            : jscs.super(), []))
+                                ] : [])));
+                        body.unshift(constructorOrInitMethodDefinition)
+                    }
+                    const fieldExpressionStatements = fieldProperties.map(property => {
+                        return jscs.expressionStatement(jscs.assignmentExpression('=',
+                                jscs.memberExpression(jscs.thisExpression(), property.key),
+                                property.value));
+                    });
+                    const superExpressionStatement = jscs(constructorOrInitMethodDefinition)
+                            .find(jscs.ExpressionStatement, {
+                                expression: {
+                                    type: 'CallExpression',
+                                    callee: (isGObjectClass ? {
+                                        type: 'MemberExpression',
+                                        object: {
+                                            type: 'Super'
+                                        },
+                                        property: {
+                                            type: 'Identifier',
+                                            name: '_init'
+                                        }
+                                    } : {
+                                        type: 'Super'
+                                    })
+                                }
+                            });
+                    if (superExpressionStatement.length) {
+                        superExpressionStatement.insertAfter(fieldExpressionStatements);
+                    } else {
+                        jscs(constructorOrInitMethodDefinition).get().get('value', 'body', 'body').unshift(
+                                ...fieldExpressionStatements);
+                    }
+                }
+
+                const classBody = jscs.classBody(body);
                 const classExpression = jscs.classExpression(id, classBody, superClass);
                 if (isGObjectClass) {
                     return jscs.callExpression(

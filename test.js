@@ -4,6 +4,8 @@ const ModalDialog = imports.ui.modalDialog;
 const MyExtension = new Lang.Class({
     Name: 'My.Extension',
 
+    _my_field: 0,
+
     _init: function() {
         true;
     },
@@ -23,6 +25,12 @@ const MyExtension = new Lang.Class({
     set prop(prop) {
         this._prop = prop;
     }
+});
+
+const MyClass = new Lang.Class({
+    Name: 'My.Class',
+
+    _my_field: Math.PI
 });
 
 const MyDialog = new Lang.Class({
