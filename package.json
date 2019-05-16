@@ -7,14 +7,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/DreaminginCodeZH/gnome-shell-es6-class-codemod.git"
+    "url": "git+https://github.com/zhanghai/gnome-shell-es6-class-codemod.git"
   },
   "author": "Hai Zhang",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/DreaminginCodeZH/gnome-shell-es6-class-codemod/issues"
+    "url": "https://github.com/zhanghai/gnome-shell-es6-class-codemod/issues"
   },
-  "homepage": "https://github.com/DreaminginCodeZH/gnome-shell-es6-class-codemod#readme",
+  "homepage": "https://github.com/zhanghai/gnome-shell-es6-class-codemod#readme",
   "dependencies": {
     "jscodeshift": "^0.6.3",
     "prompt-sync": "^4.1.6"
